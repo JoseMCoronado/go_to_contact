@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <record model="ir.actions.act_window" id="action_window_open_child_contact">
+      <field name="name">Contacts (Child)</field>
+      <field name="res_model">res.partner</field>
+      <field name="auto_search" eval="True"/>
+      <field name="context">{}</field>
+      <field name="limit">80</field>
+      <field name="src_model" eval="False"/>
+      <field name="target">current</field>
+      <field name="type">ir.actions.act_window</field>
+      <field name="usage" eval="False"/>
+      <field name="view_id" eval="False"/>
+      <field name="view_ids" eval="[(6, 0, [])]"/>
+      <field name="view_mode">form</field>
+  </record>
+  <record model="ir.actions.server" id="action_open_contact">
+    <field name="model_id" ref="bus.model_res_partner"/>
+    <field name="name">[JOS] Go to Contact</field>
+    <field name="sequence">5</field>
+    <field name="state">code</field>
+    <field name="code"><![CDATA[
+contact = record.id
+action_data = env.ref('go_to_contact.action_window_open_child_contact').read()[0]
+action_data.update({'res_id': contact})
+action = action_data
+      ]]>
+    </field>
+  </record>
+  <record model="ir.ui.view" id="view_partner_form_mod">
+    <field name="name">x_jos.res.partner.form.mod</field>
+    <field name="model">res.partner</field>
+    <field name="inherit_id" ref="base.view_partner_form"/>
+    <field name="priority">99</field>
+    <field name="arch" type="xml">
+      <xpath expr="//field[@name='child_ids']//div[@class='oe_kanban_details']" position="inside">
+        <button name="%(action_open_contact)d" class="oe_highlight" type="action">GO TO CONTACT</button>
+      </xpath>
+    </field>
+  </record>
+</odoo>
